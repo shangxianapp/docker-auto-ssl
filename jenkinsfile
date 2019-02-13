@@ -1,0 +1,21 @@
+pipeline {
+    agent any
+
+    options {
+        timestamps()
+    }
+
+    stages {
+        stage('Init') {
+            steps {
+                echo 'ok'
+            }
+        }
+    }
+    
+    post {
+        always {
+            deleteDir()
+        }
+    }
+}

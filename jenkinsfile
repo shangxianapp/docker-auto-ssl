@@ -6,13 +6,97 @@ pipeline {
     }
 
     stages {
-        stage('Init') {
-            steps {
-                echo 'okok'
+        // stage('Clone') {
+        //     steps {
+        //         checkout changelog: false, poll: false, scm: [$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'shangxianapp-github-xuexb-ssh-key', url: 'git@github.com:shangxianapp/docker-auto-ssl.git']]]
+        //     }
+        // }
+
+        stage('Generate CA') {
+            parallel {
+                stage('shangxian.app') {
+                    steps {
+                        echo 'ok'
+                        // withCredentials([string(credentialsId: 'shangxianapp-namecom-xuexb-apikey', variable: 'aliapikey'), string(credentialsId: 'shangxianapp-aliyun-xuexb-secret', variable: 'alisecret'), string(credentialsId: 'shangxianapp-namecom-xuexb-apikey', variable: 'nameapikey'), string(credentialsId: 'shangxianapp-namecom-xuexb-secret', variable: 'namesecret')]) {
+                        //     sh label: '', script: 'docker run --rm -v "${WORKSPACE}/out/sg02":/acme.sh -e Namecom_Username=${nameapikey} -e Namecom_Token=${namesecret} neilpang/acme.sh --issue --renew-all --debug --dns dns_namecom --log --force -d shangxian.app -d *.shangxian.app'
+                        // }
+                    }
+                }
+
+                stage('other .app domian') {
+                    steps {
+                        echo 'ok'
+                        // withCredentials([string(credentialsId: 'shangxianapp-namecom-xuexb-apikey', variable: 'aliapikey'), string(credentialsId: 'shangxianapp-aliyun-xuexb-secret', variable: 'alisecret'), string(credentialsId: 'shangxianapp-namecom-xuexb-apikey', variable: 'nameapikey'), string(credentialsId: 'shangxianapp-namecom-xuexb-secret', variable: 'namesecret')]) {
+                        //     sh label: '', script: 'docker run --rm -v "${WORKSPACE}/out/sg02":/acme.sh -e Namecom_Username=${nameapikey} -e Namecom_Token=${namesecret} neilpang/acme.sh --issue --renew-all --debug --dns dns_namecom --log --force -d bfe.app -d *.bfe.app -d dalao.app -d *.dalao.app -d mengxiang.app -d *.mengxiang.app -d yusan.app -d *.yusan.app -d diban.app -d *.diban.app -d jiemeng.app -d *.jiemeng.app -d mubu.app -d *.mubu.app'
+                        // }
+                    }
+                }
+
+                stage('xuexb') {
+                    steps {
+                        echo 'ok'
+                    }
+                }
+
+                stage('jiandansousuo') {
+                    steps {
+                        echo 'ok'
+                    }
+                }
+
+                stage('apijs') {
+                    steps {
+                        echo 'ok'
+                    }
+                }
+            }
+        }
+
+        stage('Sync CA') {
+            parallel {
+                stage('bj01') {
+                    steps {
+                        echo 'ok'
+                    }
+                }
+
+                stage('sg01') {
+                    steps {
+                        echo 'ok'
+                    }
+                }
+
+                stage('sg02') {
+                    steps {
+                        sshPublisher(publishers: [sshPublisherDesc(configName: 'sg02', transfers: [sshTransfer(cleanRemote: false, excludes: '', execCommand: 'echo \'success ok\'', execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '${DOCKER_NGINX_CA_DIR}', remoteDirectorySDF: false, removePrefix: 'out/sg02', sourceFiles: 'out/sg02/**/*')], usePromotionTimestamp: false, useWorkspaceInPromotion: false, verbose: false)])
+                    }
+                }
+            }
+        }
+
+        stage('Reload Nginx') {
+            parallel {
+                stage('bj01') {
+                    steps {
+                        echo 'ok'
+                    }
+                }
+
+                stage('sg01') {
+                    steps {
+                        echo 'ok'
+                    }
+                }
+
+                stage('sg02') {
+                    steps {
+                        echo 'ok'
+                    }
+                }
             }
         }
     }
-    
+
     post {
         always {
             deleteDir()
